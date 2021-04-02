@@ -29,6 +29,7 @@ ext {
     lombokVersion = "1.18.20"
     jsonAdapterVersion = "1.0.0"
     jwtVersion = "9.7"
+    jacksonVersion = "2.12.2"
 
     junitVersion = "5.7.1"
 }
@@ -60,6 +61,9 @@ dependencies {
     implementation "com.github.michaelruocco:file-loader:6.0.1"
     implementation "org.junit.jupiter:junit-jupiter-api:${junitVersion}"
     implementation "com.github.michaelruocco:json-adapter:${jsonAdapterVersion}"
+    implementation "net.minidev:json-smart:2.3"
+    implementation "com.fasterxml.jackson.core:jackson-annotations:${jacksonVersion}"
+    implementation "com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}"
 
     testCompileOnly "org.projectlombok:lombok:${lombokVersion}"
     testAnnotationProcessor "org.projectlombok:lombok:${lombokVersion}"
@@ -67,14 +71,15 @@ dependencies {
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${junitVersion}"
     testImplementation "org.junit.jupiter:junit-jupiter-api:${junitVersion}"
     testImplementation "org.assertj:assertj-core:3.19.0"
-    testImplementation "org.mockito:mockito-core:3.8.0"
     testImplementation "com.nimbusds:nimbus-jose-jwt:${jwtVersion}"
 
     testFixturesCompileOnly "org.projectlombok:lombok:${lombokVersion}"
     testFixturesAnnotationProcessor "org.projectlombok:lombok:${lombokVersion}"
     testFixturesImplementation "com.github.michaelruocco:rest-client:0.1.8"
     testFixturesImplementation "com.github.michaelruocco:json-adapter:${jsonAdapterVersion}"
-    testFixturesImplementation "com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.12.2"
+    testFixturesImplementation "com.fasterxml.jackson.core:jackson-annotations:${jacksonVersion}"
+    testFixturesImplementation "com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}"
+    testFixturesImplementation "com.fasterxml.jackson.datatype:jackson-datatype-jdk8:${jacksonVersion}"
     testFixturesImplementation "com.nimbusds:nimbus-jose-jwt:${jwtVersion}"
 }
 
