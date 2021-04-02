@@ -20,8 +20,8 @@ good overview and description [here](https://www.baeldung.com/spring-security-oa
 
 The fake web server provides two endpoints that are described below:
 
-1. ```.well-known/jwks.json``` that returns a JWK set containing a single key definition
-2. ```/oauth/token``` that returns a JWT signed with the key returned from the above endpoint
+1.  ```.well-known/jwks.json``` that returns a JWK set containing a single key definition
+2.  ```/oauth/token``` that returns a JWT signed with the key returned from the above endpoint
 
 If you are building an application that uses JWTs for accessing secured endpoints, you can 
 configure your application to point at the JWKs endpoint, so that it can use the JWK to decode

@@ -37,7 +37,7 @@ class FakeJwtAuthServerExtensionTest {
     private final FakeJwtClient client = new FakeJwtClient(SERVER.localUri());
 
     @Test
-    void shouldReturnValidTokenDirectlyFromExtension() throws java.text.ParseException, JOSEException {
+    void shouldReturnValidTokenDirectlyFromExtension() throws ParseException, JOSEException {
         TokenRequest request = TokenRequest.builder()
                 .clientId("test-client-id-1")
                 .build();
