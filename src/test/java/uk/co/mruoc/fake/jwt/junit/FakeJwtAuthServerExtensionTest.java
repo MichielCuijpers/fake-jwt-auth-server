@@ -2,13 +2,11 @@ package uk.co.mruoc.fake.jwt.junit;
 
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWSVerifier;
-import com.nimbusds.jose.crypto.RSASSAVerifier;
-import com.nimbusds.jose.jwk.JWKSet;
-import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
+import uk.co.mruoc.fake.jwt.VerifierFactory;
 import uk.co.mruoc.fake.jwt.authserver.DefaultFakeJwtAuthServerConfig;
 import uk.co.mruoc.fake.jwt.authserver.FakeJwtAuthServerConfig;
 import uk.co.mruoc.fake.jwt.token.Token;
@@ -29,7 +27,9 @@ class FakeJwtAuthServerExtensionTest {
 
     private static final Instant NOW = Instant.parse("2021-04-02T18:18:40Z");
     private static final Clock CLOCK = Clock.fixed(NOW, ZoneId.systemDefault());
-    private static final FakeJwtAuthServerConfig CONFIG = new DefaultFakeJwtAuthServerConfig(CLOCK);
+    private static final FakeJwtAuthServerConfig CONFIG = DefaultFakeJwtAuthServerConfig.builder()
+            .clock(CLOCK)
+            .build();
 
     @RegisterExtension
     public static final FakeJwtAuthServerExtension SERVER = new FakeJwtAuthServerExtension(CONFIG);
@@ -45,7 +45,7 @@ class FakeJwtAuthServerExtensionTest {
         Token token = SERVER.generateToken(request);
 
         SignedJWT signedJwt = SignedJWT.parse(token.getValue());
-        JWSVerifier verifier = getRsaJwsVerifierFromKeySet();
+        JWSVerifier verifier = VerifierFactory.getRsaJwsVerifierFromKeySet(client);
         assertThat(signedJwt.verify(verifier)).isTrue();
         assertThat(token.getExpiry()).isEqualTo(Duration.ofHours(1));
     }
@@ -58,7 +58,7 @@ class FakeJwtAuthServerExtensionTest {
 
         SignedJWT signedJwt = client.getToken(request);
 
-        JWSVerifier verifier = getRsaJwsVerifierFromKeySet();
+        JWSVerifier verifier = VerifierFactory.getRsaJwsVerifierFromKeySet(client);
         assertThat(signedJwt.verify(verifier)).isTrue();
     }
 
@@ -72,7 +72,7 @@ class FakeJwtAuthServerExtensionTest {
 
         JWTClaimsSet claims = signedJwt.getJWTClaimsSet();
         assertThat(claims.getSubject()).isEqualTo(String.format("%s@clients", request.getClientId()));
-        assertThat(claims.getIssuer()).isEqualTo("https://michaelruocco.eu.auth0.com/");
+        assertThat(claims.getIssuer()).isEqualTo("default-issuer");
         assertThat(claims.getIssueTime()).isEqualTo(Date.from(NOW));
         assertThat(claims.getExpirationTime()).isEqualTo(Date.from(NOW.plus(1, ChronoUnit.HOURS)));
     }
@@ -101,12 +101,6 @@ class FakeJwtAuthServerExtensionTest {
 
         JWTClaimsSet claims = signedJwt.getJWTClaimsSet();
         assertThat(claims.getAudience()).containsExactly("default-audience");
-    }
-
-    private JWSVerifier getRsaJwsVerifierFromKeySet() throws JOSEException {
-        JWKSet jwkSet = client.getKeySet();
-        RSAKey rsaKey = jwkSet.getKeyByKeyId("default-rsa-key-id").toRSAKey();
-        return new RSASSAVerifier(rsaKey);
     }
 
 }

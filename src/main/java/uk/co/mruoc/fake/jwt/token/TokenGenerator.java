@@ -13,7 +13,7 @@ import java.util.Date;
 @Builder
 public class TokenGenerator {
 
-    private final JsonWebKeySetProvider provider;
+    private final JsonWebKeySetProvider keySetProvider;
 
     @Builder.Default
     private final Clock clock = Clock.systemUTC();
@@ -22,12 +22,12 @@ public class TokenGenerator {
     private final String defaultAudience = "default-audience";
 
     @Builder.Default
-    private final String issuer = "https://michaelruocco.eu.auth0.com/";
+    private final String issuer = "default-issuer";
 
     public Token generate(TokenRequest request) {
         JWTClaimsSet claims = toClaims(request);
         return Token.builder()
-                .value(provider.generateToken(request.getClientId(), claims))
+                .value(keySetProvider.generateToken(request.getClientId(), claims))
                 .expiry(calculateExpiry(claims))
                 .build();
     }

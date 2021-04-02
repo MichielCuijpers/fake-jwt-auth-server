@@ -3,19 +3,28 @@ package uk.co.mruoc.fake.jwt;
 import lombok.extern.slf4j.Slf4j;
 import uk.co.mruoc.fake.jwt.authserver.DefaultFakeJwtAuthServerConfig;
 import uk.co.mruoc.fake.jwt.authserver.FakeJwtAuthServer;
+import uk.co.mruoc.fake.jwt.authserver.FakeJwtAuthServerConfig;
 
 @Slf4j
 public class Main {
 
-    private static final FakeJwtAuthServer SERVER = new FakeJwtAuthServer(new DefaultFakeJwtAuthServerConfig());
-
     public static void main(String[] args) {
-        log.info("server running at {}", SERVER.start());
-        Runtime.getRuntime().addShutdownHook(new Thread(SERVER::stop));
+        try {
+            CommandLineArguments arguments = CommandLineArguments.parse(args);
+            FakeJwtAuthServer server = new FakeJwtAuthServer(toConfig(arguments));
+            log.info("server running at {}", server.start());
+            Runtime.getRuntime().addShutdownHook(new Thread(server::stop));
+        } catch (CommandLineArgumentsException e) {
+            log.error(e.getMessage());
+        }
     }
 
-    public static String getUri() {
-        return SERVER.localUri();
+    private static FakeJwtAuthServerConfig toConfig(CommandLineArguments arguments) {
+        return DefaultFakeJwtAuthServerConfig.builder()
+                .port(arguments.getPort())
+                .issuer(arguments.getIssuer())
+                .defaultAudience(arguments.getAudience())
+                .build();
     }
 
 }

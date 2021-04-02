@@ -3,7 +3,8 @@ package uk.co.mruoc.fake.jwt.authserver;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 import com.github.tomakehurst.wiremock.extension.Extension;
-import lombok.RequiredArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
 import uk.co.mruoc.fake.jwt.token.TokenGenerator;
 import uk.co.mruoc.fake.jwt.token.TokenResponseTransformer;
 import uk.co.mruoc.fake.jwt.key.JsonWebKeySetProvider;
@@ -12,29 +13,33 @@ import uk.co.mruoc.json.jackson.JacksonJsonConverter;
 
 import java.time.Clock;
 
-@RequiredArgsConstructor
+@Builder
+@Data
 public class DefaultFakeJwtAuthServerConfig implements FakeJwtAuthServerConfig {
 
-    private final WireMockConfiguration wireMockConfig;
-    private final JsonWebKeySetProvider keySetProvider;
-    private final JsonConverter jsonConverter;
-    private final Clock clock;
+    private static final int DYNAMIC_PORT = 0;
 
-    public DefaultFakeJwtAuthServerConfig() {
-        this(new JsonWebKeySetProvider(), Clock.systemUTC());
-    }
+    @Builder.Default
+    private final int port = DYNAMIC_PORT;
 
-    public DefaultFakeJwtAuthServerConfig(Clock clock) {
-        this(new JsonWebKeySetProvider(), clock);
-    }
+    @Builder.Default
+    private final JsonWebKeySetProvider keySetProvider = new JsonWebKeySetProvider();
 
-    public DefaultFakeJwtAuthServerConfig(JsonWebKeySetProvider keySetProvider, Clock clock) {
-        this(toWireMockConfig(keySetProvider, clock), keySetProvider, new JacksonJsonConverter(new ObjectMapper()), clock);
-    }
+    @Builder.Default
+    private final JsonConverter jsonConverter = new JacksonJsonConverter(new ObjectMapper());
+
+    @Builder.Default
+    private final Clock clock = Clock.systemUTC();
+
+    @Builder.Default
+    private final String defaultAudience = "default-audience";
+
+    @Builder.Default
+    private final String issuer = "default-issuer";
 
     @Override
     public WireMockConfiguration getWiremockConfig() {
-        return wireMockConfig;
+        return toWireMockConfig();
     }
 
     @Override
@@ -49,24 +54,26 @@ public class DefaultFakeJwtAuthServerConfig implements FakeJwtAuthServerConfig {
 
     @Override
     public TokenGenerator getTokenGenerator() {
-        return toTokenGenerator(keySetProvider, clock);
+        return toTokenGenerator();
     }
 
-    private static WireMockConfiguration toWireMockConfig(JsonWebKeySetProvider keySetProvider, Clock clock) {
+    private WireMockConfiguration toWireMockConfig() {
         return WireMockConfiguration.wireMockConfig()
-                .extensions(toExtension(keySetProvider, clock))
-                .dynamicPort();
+                .extensions(toExtension())
+                .port(port);
     }
 
-    private static Extension toExtension(JsonWebKeySetProvider keySetProvider, Clock clock) {
+    private Extension toExtension() {
         return TokenResponseTransformer.builder()
-                .tokenGenerator(toTokenGenerator(keySetProvider, clock))
+                .tokenGenerator(toTokenGenerator())
                 .build();
     }
 
-    private static TokenGenerator toTokenGenerator(JsonWebKeySetProvider provider, Clock clock) {
+    private TokenGenerator toTokenGenerator() {
         return TokenGenerator.builder()
-                .provider(provider)
+                .issuer(issuer)
+                .defaultAudience(defaultAudience)
+                .keySetProvider(keySetProvider)
                 .clock(clock)
                 .build();
     }
