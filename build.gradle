@@ -37,6 +37,9 @@ ext {
     jacksonVersion = "2.12.2"
 
     junitVersion = "5.7.1"
+
+    imageName = "michaelruocco/${project.name}"
+    isSnapshot = "${version}".contains("SNAPSHOT")
 }
 
 scmVersion {
@@ -119,11 +122,13 @@ docker {
 
 import com.bmuschko.gradle.docker.tasks.image.DockerBuildImage
 import com.bmuschko.gradle.docker.tasks.image.DockerPushImage
-import com.bmuschko.gradle.docker.tasks.image.DockerTagImage
 
 task buildImage(type: DockerBuildImage) {
     inputDir.set(file("."))
-    images.add("michaelruocco/${project.name}:${version}")
+    images.add("${imageName}:${version}")
+    if (!isSnapshot) {
+        images.add("${imageName}:latest")
+    }
     buildArgs = ["VERSION": version]
 }
 
@@ -134,13 +139,6 @@ dockerCompose {
 postman {
     collections = fileTree(dir: "postman", include: "*_collection.json")
     stopOnError = true
-}
-
-task tagImage(type: DockerTagImage) {
-    dependsOn buildImage
-    imageId = buildImage.getImageId()
-    tag = "latest"
-    repository = "michaelruocco/fake-jwt-auth-server"
 }
 
 task pushImage(type: DockerPushImage) {
