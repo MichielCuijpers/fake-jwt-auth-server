@@ -90,7 +90,7 @@ jobs:
         run: ./gradlew buildImage
 
       - name: Test Image
-        run: ./gradlew composeUp postman composeUp tagImage
+        run: ./gradlew composeUp postman composeUp
 
       - name: Push Image
         env:
