@@ -85,3 +85,15 @@ jobs:
           ./gradlew release -Prelease.customUsername=${{ github.actor }} -Prelease.customPassword=${{ github.token }}
           ./gradlew publish closeAndReleaseRepository
           ./gradlew currentVersion
+
+      - name: Build Image
+        run: ./gradlew buildImage
+
+      - name: Test Image
+        run: ./gradlew startContainer postman stopContainer
+
+      - name: Push Image
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+        run: ./gradlew pushImage

@@ -1,0 +1,127 @@
+{
+	"info": {
+		"_postman_id": "c446a733-c375-4551-939d-5fe93741bbf5",
+		"name": "fake-jwt-auth-server",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "get-json-web-key-set",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var json = pm.response.json();",
+							"",
+							"pm.test(\"should return ok status\", function () {",
+							"    pm.response.to.have.status(200)",
+							"})",
+							"",
+							"pm.test(\"should return 1 key\", function () {",
+							"    pm.expect(json.keys.length).to.eql(1)",
+							"})",
+							"",
+							"pm.test(\"should return RSA key\", function () {",
+							"    var key = json.keys[0]",
+							"    pm.expect(key.kty).to.eql(\"RSA\")",
+							"    pm.expect(key.e).to.eql(\"AQAB\")",
+							"    pm.expect(key.use).to.eql(\"sig\")",
+							"    pm.expect(key.kid).to.eql(\"default-rsa-key-id\")",
+							"    pm.expect(key.alg).to.eql(\"RS256\")",
+							"    pm.expect(key.n).to.not.eql(null)",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8090/.well-known/jwks.json",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8090",
+					"path": [
+						".well-known",
+						"jwks.json"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "generate-token-with-audience",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var json = pm.response.json()",
+							"postman.setEnvironmentVariable(\"token\", json.access_token)",
+							"",
+							"pm.test(\"should return ok status\", function () {",
+							"    pm.response.to.have.status(200)",
+							"})",
+							"",
+							"pm.test(\"should return token\", function () {",
+							"    pm.expect(json.access_token).to.not.eql(null)",
+							"})",
+							"",
+							"pm.test(\"should return expires in 1 hour in milliseconds\", function () {",
+							"    pm.expect(json.expires_in).to.eql(3600000)",
+							"})",
+							"",
+							"pm.test(\"should return bearer token type\", function () {",
+							"    pm.expect(json.token_type).to.eql(\"Bearer\")",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"client_id\": \"postman-client-id\",\n    \"client_secret\": \"postman-client-secret\",\n    \"audience\": \"postman-audience\",\n    \"grant_type\": \"client_credentials\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8090/oauth/token",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8090",
+					"path": [
+						"oauth",
+						"token"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
