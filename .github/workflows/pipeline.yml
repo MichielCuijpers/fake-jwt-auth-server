@@ -48,9 +48,6 @@ jobs:
       - name: Test
         run: ./gradlew test
 
-      - name: Build Image
-        run: ./gradlew buildImage
-
       - name: Sonar Analysis
         env:
           GITHUB_TOKEN: ${{ github.token }}
@@ -88,6 +85,9 @@ jobs:
           ./gradlew release -Prelease.customUsername=${{ github.actor }} -Prelease.customPassword=${{ github.token }}
           ./gradlew publish closeAndReleaseRepository
           ./gradlew currentVersion
+
+      - name: Build Image
+        run: ./gradlew buildImage
 
       - name: Test Image
         run: ./gradlew composeUp postman composeUp tagImage
