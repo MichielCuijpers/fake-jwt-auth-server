@@ -21,6 +21,8 @@ plugins {
     id "pl.allegro.tech.build.axion-release" version "1.13.1"
     id "org.sonarqube" version "3.1.1"
     id "nebula.lint" version "16.17.1"
+    id "com.github.johnrengelman.shadow" version "6.1.0"
+    id "com.bmuschko.docker-remote-api" version "6.7.0"
 }
 
 group "com.github.michaelruocco"
@@ -96,8 +98,34 @@ tasks.withType(Test) {
     }
 }
 
+mainClassName = "uk.co.mruoc.fake.jwt.Main"
+
+shadowJar {
+    mergeServiceFiles()
+}
+
 application {
-    mainClass = 'uk.co.mruoc.fake.jwt.Main'
+    mainClass = mainClassName
+}
+
+docker {
+    registryCredentials {
+        username.set(System.getenv("DOCKER_USERNAME"))
+        password.set(System.getenv("DOCKER_PASSWORD"))
+    }
+}
+
+import com.bmuschko.gradle.docker.tasks.image.DockerBuildImage
+import com.bmuschko.gradle.docker.tasks.image.DockerPushImage
+
+task buildImage(type: DockerBuildImage) {
+    inputDir.set(file("."))
+    images.add("michaelruocco/${project.name}:${version}")
+    buildArgs = ["VERSION": version]
+}
+
+task pushImage(type: DockerPushImage) {
+    images.set(buildImage.images)
 }
 
 jacoco {
