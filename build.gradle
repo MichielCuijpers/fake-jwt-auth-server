@@ -41,7 +41,7 @@ ext {
 scmVersion {
     versionCreator "versionWithBranch"
     tag {
-        prefix = "${name}"
+        prefix = "${name}-"
     }
 }
 project.version = scmVersion.version
