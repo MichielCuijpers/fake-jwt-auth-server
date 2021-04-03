@@ -1,0 +1,8 @@
+version: '3'
+services:
+
+  fake-jwt-auth-server:
+    image: michaelruocco/fake-jwt-auth-server:${APP_VERSION}
+    container_name: fake-jwt-auth-server
+    ports:
+      - 8090:80
