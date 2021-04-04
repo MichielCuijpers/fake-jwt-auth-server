@@ -37,12 +37,11 @@ class MainTest {
 
     @Test
     void shouldStartServerIfArgumentsAreValid() throws Exception {
-        String port = "8099";
-        String[] args = new String[]{"-p", port, "-i", "test-issuer", "-a", "test-audience"};
+        String[] args = new String[]{"-p", "0", "-i", "test-issuer", "-a", "test-audience"};
 
         String output = tapSystemErr(() -> Main.main(args));
 
-        assertThat(output).endsWith(String.format("server running at http://localhost:%s%n", port));
+        assertThat(output).contains("server running at http://localhost:");
     }
 
     @Test
