@@ -2,8 +2,8 @@
 
 [![Build](https://github.com/michaelruocco/fake-jwt-auth-server/workflows/pipeline/badge.svg)](https://github.com/michaelruocco/fake-jwt-auth-server/actions)
 [![codecov](https://codecov.io/gh/michaelruocco/fake-jwt-auth-server/branch/master/graph/badge.svg?token=FWDNP534O7)](https://codecov.io/gh/michaelruocco/fake-jwt-auth-server)
-[![Codacy Badge](https://app.codacy.com/project/badge/Grade/272889cf707b4dcb90bf451392530794)](https://www.codacy.com/gh/michaelruocco/fake-jwt-auth-server/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=michaelruocco/fake-jwt-auth-server&amp;utm_campaign=Badge_Grade)
 [![BCH compliance](https://bettercodehub.com/edge/badge/michaelruocco/fake-jwt-auth-server?branch=master)](https://bettercodehub.com/)
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/272889cf707b4dcb90bf451392530794)](https://www.codacy.com/gh/michaelruocco/fake-jwt-auth-server/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=michaelruocco/fake-jwt-auth-server&amp;utm_campaign=Badge_Grade)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=michaelruocco_fake-jwt-auth-server&metric=alert_status)](https://sonarcloud.io/dashboard?id=michaelruocco_fake-jwt-auth-server)
 [![Technical Debt](https://sonarcloud.io/api/project_badges/measure?project=michaelruocco_fake-jwt-auth-server&metric=sqale_index)](https://sonarcloud.io/dashboard?id=michaelruocco_fake-jwt-auth-server)
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=michaelruocco_fake-jwt-auth-server&metric=coverage)](https://sonarcloud.io/dashboard?id=michaelruocco_fake-jwt-auth-server)
